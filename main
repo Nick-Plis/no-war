@@ -1,0 +1,26 @@
+import pandas as pd
+import pyodbc
+
+csv = "test1.csv"
+df = pd.read_csv(csv)
+
+database = pyodbc.connect('Driver={SQL Server};Server=localhost\SQLEXPRESS;Database=master;Trusted_Connection=True;')
+
+cursor = database.cursor()
+
+cursor.execute('''
+		CREATE TABLE test (
+			Field1 int,
+			Field2 nvarchar(50),
+			)
+               ''')
+
+for row in df.itertuples():
+    cursor.execute(
+        ''' INSERT INTO test(Field1, Field2)
+        VALUES (?,?)
+        ''',
+        row.Field1,
+        row.Field2
+    )
+database.commit()
