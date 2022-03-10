@@ -1,26 +1,49 @@
 import pandas as pd
 import pyodbc
+import json
 
-csv = "test1.csv"
-df = pd.read_csv(csv)
+file = open('file.json')
+data = json.load(file)
+df_main = pd.DataFrame(data)
 
-database = pyodbc.connect('Driver={SQL Server};Server=localhost\SQLEXPRESS;Database=master;Trusted_Connection=True;')
+main_requests = pyodbc.connect('Driver={SQL Server};Server=localhost\SQLEXPRESS;Database=master;Trusted_Connection=True;')
+rb_codewords = pyodbc.connect('Driver={SQL Server};Server=localhost\SQLEXPRESS;Database=master;Trusted_Connection=True;')
+cursor_main = main_requests.cursor()
+cursor_codewords = rb_codewords.cursor()
 
-cursor = database.cursor()
+df_codewords = pd.read_sql('rb_codewords', rb_codewords)
+if df_main['codeword'] in df_codewords['codeword']:
+    df_main['request_time'] = pd.to_datetime(df_main['request_time'])
+    df_codewords['date_to'] = pd.to_datetime(df_codewords['date_to'])
+    if df_main['request_time'] < df_codewords['date_to']:
+        pass
 
-cursor.execute('''
-		CREATE TABLE test (
-			Field1 int,
-			Field2 nvarchar(50),
-			)
-               ''')
+    else:
+        df_main = pd.DataFrame(df_main['id', 'request_ip', 'request_time',
+                                       'district_id', 'where', 'when', 'importance_id',
+                                       'request', 'phone', 'name'], columns=df_main.columns)
 
-for row in df.itertuples():
-    cursor.execute(
-        ''' INSERT INTO test(Field1, Field2)
-        VALUES (?,?)
+else:
+    df_main = pd.DataFrame(df_main['id', 'request_ip', 'request_time',
+                                   'district_id', 'where', 'when', 'importance_id',
+                                   'request', 'phone', 'name'], columns=df_main.columns)
+
+for row in df_main.itertuples():
+    cursor_main.execute(
+        ''' INSERT INTO main_requests(id, request_ip, request_time, district_id, 
+        where, when, importance_id, codeword, request, phone, name)
+        VALUES (?,?,?,?,?,?,?,?,?,?)
         ''',
-        row.Field1,
-        row.Field2
+        row.id,
+        row.request_ip,
+        row.request_time,
+        row.district_id,
+        row.where,
+        row.when,
+        row.importance_id,
+        row.codeword,
+        row.request,
+        row.phone,
+        row.name
     )
-database.commit()
+main_requests.commit()
