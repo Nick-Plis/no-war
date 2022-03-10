@@ -9,7 +9,6 @@ df_main = pd.DataFrame(data)
 main_requests = pyodbc.connect('Driver={SQL Server};Server=localhost\SQLEXPRESS;Database=master;Trusted_Connection=True;')
 rb_codewords = pyodbc.connect('Driver={SQL Server};Server=localhost\SQLEXPRESS;Database=master;Trusted_Connection=True;')
 cursor_main = main_requests.cursor()
-cursor_codewords = rb_codewords.cursor()
 
 df_codewords = pd.read_sql('rb_codewords', rb_codewords)
 if df_main['codeword'] in df_codewords['codeword']:
