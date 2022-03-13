@@ -1,10 +1,21 @@
 import pandas as pd
 import pyodbc
 import json
+import os.path
 
-file = open('file.json')
-data = json.load(file)
-df_main = pd.DataFrame(data)
+
+def json_check():
+    if os.path.exists('file.json'):
+        file = open('file.json')
+        data = json.load(file)
+        df_main = pd.DataFrame(data)
+        return df_main
+
+    else:
+        json_check()
+
+json_check()
+df_main = json_check()
 
 main_requests = pyodbc.connect('Driver={SQL Server};Server=localhost\SQLEXPRESS;Database=master;Trusted_Connection=True;')
 rb_codewords = pyodbc.connect('Driver={SQL Server};Server=localhost\SQLEXPRESS;Database=master;Trusted_Connection=True;')
