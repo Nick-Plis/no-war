@@ -10,7 +10,7 @@ def json_check():
     return df_main
 
 
-df_codewords = pd.read_csv('rb_codewords')
+df_codewords = pd.read_csv('rb_codewords.csv')
 
 while True:
     try:
@@ -29,7 +29,7 @@ while True:
                                            'district_id', 'where', 'when', 'importance_id',
                                            'request', 'phone', 'name'], columns=df_main.columns)
 
-        df_main.to_csv(r'main_requests', mode='a', header=False)
+        df_main.to_csv(r'main_requests.csv', mode='a', header=False)
 
     except:
         continue
