@@ -24,7 +24,6 @@ try:
                                        'request', 'phone', 'name'], columns=df_main.columns)
 
 except:
-    pass
+    break
 
-print('123')
 df_main.to_csv(r'main_requests.csv', header=False, index=False)
